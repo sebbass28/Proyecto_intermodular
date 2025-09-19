@@ -56,6 +56,7 @@ CREATE TABLE `productos` (
   `precio` double NOT NULL,
   `imagen` tinyblob DEFAULT NULL,
   `descripcion` varchar(255) DEFAULT NULL,
+  `stock` INTEGER NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -66,7 +67,15 @@ CREATE TABLE `productos` (
 
 LOCK TABLES `productos` WRITE;
 /*!40000 ALTER TABLE `productos` DISABLE KEYS */;
-INSERT INTO `productos` VALUES (1,'Osito Daisy Peluche',15.99,'','Suave y tierno osito perfecto para acurrucarse'),(2,'Conejito Rosa',18.99,'','Adorable conejito en tono rosa pastel'),(3,'Elefante Francisca La Tierna',23.99,'','Elefante suave con orejas extra grandes'),(4,'León Valiente',21.99,'','León con melena esponjosa y sonrisa amigable'),(5,'Pingüino Polar',19.99,'','Pingüino suave con bufanda invernal'),(6,'Unicornio Mágico',25.99,'','Unicornio brillante con cuerno dorado');
+INSERT INTO `productos` 
+VALUES 
+(1,'Osito Daisy Peluche',15.99,'','Suave y tierno osito perfecto para acurrucarse', 32),
+(2,'Conejito Rosa',18.99,'','Adorable conejito en tono rosa pastel', 58),
+(3,'Elefante Francisca La Tierna',23.99,'','Elefante suave con orejas extra grandes', 67),
+(4,'León Valiente',21.99,'','León con melena esponjosa y sonrisa amigable', 46),
+(5,'Pingüino Polar',19.99,'','Pingüino suave con bufanda invernal', 51),
+(6,'Unicornio Mágico',25.99,'','Unicornio brillante con cuerno dorado', 73);
+
 /*!40000 ALTER TABLE `productos` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -101,4 +110,34 @@ VALUES ('Pepe Ramos', 'pepon11@gmail.com', 'pepepepito2000');
 
 INSERT INTO carrito (cliente_id, id_productos, cantidad)
 VALUES (1, 2, 3); -- cliente_id = 1, producto_id = 2, cantidad = 3
+
+
+
+CREATE TRIGGER restar_stock
+AFTER INSERT ON carrito
+FOR EACH ROW
+BEGIN
+  -- Verificar que el stock no sea negativo antes de restar
+  IF (SELECT stock FROM productos WHERE id = NEW.id_productos) >= NEW.cantidad THEN
+    UPDATE productos
+    SET stock = stock - NEW.cantidad
+    WHERE id = NEW.id_productos;
+  ELSE
+    -- Si el stock no es suficiente, puedes manejarlo de alguna manera (como un error o un log)
+    SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Stock insuficiente para añadir al carrito';
+  END IF;
+END;
+
+
+
+
+CREATE TRIGGER sumar_stock
+AFTER DELETE ON carrito
+FOR EACH ROW
+BEGIN
+  -- Sumar al stock el producto que se ha eliminado del carrito
+  UPDATE productos
+  SET stock = stock + OLD.cantidad
+  WHERE id = OLD.id_productos;
+END; 
 
