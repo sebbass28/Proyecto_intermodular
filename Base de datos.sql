@@ -24,12 +24,12 @@ DROP TABLE IF EXISTS `carrito`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `carrito` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
-  `id_productos` int(11) DEFAULT NULL,
-  `cantidad` int(11) NOT NULL CHECK (`cantidad` > 0),
-  `fecha_agregado` datetime DEFAULT current_timestamp(),
+  `cantidad` int(11) NOT NULL,
+  `fecha_agregado` datetime(6) DEFAULT NULL,
+  `id_productos` bigint(20) DEFAULT NULL,
   PRIMARY KEY (`id`),
-  KEY `fk_productos` (`id_productos`),
-  CONSTRAINT `fk_productos` FOREIGN KEY (`id_productos`) REFERENCES `productos` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+  KEY `FKpmwj8wqgx8rh4dttyrgt5dnwc` (`id_productos`),
+  CONSTRAINT `FKpmwj8wqgx8rh4dttyrgt5dnwc` FOREIGN KEY (`id_productos`) REFERENCES `productos` (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -39,8 +39,64 @@ CREATE TABLE `carrito` (
 
 LOCK TABLES `carrito` WRITE;
 /*!40000 ALTER TABLE `carrito` DISABLE KEYS */;
-INSERT INTO `carrito` VALUES (8,2,10,'2025-09-19 09:40:12');
 /*!40000 ALTER TABLE `carrito` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `clientes`
+--
+
+DROP TABLE IF EXISTS `clientes`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `clientes` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `apellido` varchar(255) NOT NULL,
+  `direccion` varchar(255) DEFAULT NULL,
+  `email` varchar(255) NOT NULL,
+  `nombre` varchar(255) NOT NULL,
+  `password` varchar(255) DEFAULT NULL,
+  `telefono` varchar(255) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `UK1c96wv36rk2hwui7qhjks3mvg` (`email`)
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `clientes`
+--
+
+LOCK TABLES `clientes` WRITE;
+/*!40000 ALTER TABLE `clientes` DISABLE KEYS */;
+INSERT INTO `clientes` VALUES (1,'Pérez','Calle Principal 123, Madrid','juan.perez@gmail.com','Juan','password123','123-456-7890'),(2,'García','Avenida Central 456, Barcelona','maria.garcia@gmail.com','María','password123','987-654-3210'),(3,'López','Plaza Mayor 789, Valencia','carlos.lopez@gmail.com','Carlos','password123','555-123-4567'),(4,'Martínez','Calle Nueva 321, Sevilla','ana.martinez@gmail.com','Ana','password123','444-555-6666'),(5,'Sánchez','Paseo del Prado 654, Bilbao','roberto.sanchez@gmail.com','Roberto','password123','777-888-9999'),(6,'patxi','a','traccthor@gmail.com','marc','123456','56');
+/*!40000 ALTER TABLE `clientes` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `contactos`
+--
+
+DROP TABLE IF EXISTS `contactos`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `contactos` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `nombre` varchar(255) NOT NULL,
+  `email` varchar(255) NOT NULL,
+  `mensaje` text NOT NULL,
+  `fecha_creacion` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `contactos`
+--
+
+LOCK TABLES `contactos` WRITE;
+/*!40000 ALTER TABLE `contactos` DISABLE KEYS */;
+INSERT INTO `contactos` VALUES (1,'marc','traccthor@gmail.com','w','2025-09-23 10:18:06');
+/*!40000 ALTER TABLE `contactos` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -51,11 +107,12 @@ DROP TABLE IF EXISTS `productos`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `productos` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `descripcion` varchar(255) DEFAULT NULL,
+  `imagen` varchar(255) DEFAULT NULL,
   `nombre` varchar(255) DEFAULT NULL,
   `precio` double NOT NULL,
-  `imagen` tinyblob DEFAULT NULL,
-  `descripcion` varchar(255) DEFAULT NULL,
+  `stock` int(11) DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -66,7 +123,7 @@ CREATE TABLE `productos` (
 
 LOCK TABLES `productos` WRITE;
 /*!40000 ALTER TABLE `productos` DISABLE KEYS */;
-INSERT INTO `productos` VALUES (1,'Osito Daisy Peluche',15.99,'','Suave y tierno osito perfecto para acurrucarse'),(2,'Conejito Rosa',18.99,'','Adorable conejito en tono rosa pastel'),(3,'Elefante Francisca La Tierna',23.99,'','Elefante suave con orejas extra grandes'),(4,'León Valiente',21.99,'','León con melena esponjosa y sonrisa amigable'),(5,'Pingüino Polar',19.99,'','Pingüino suave con bufanda invernal'),(6,'Unicornio Mágico',25.99,'','Unicornio brillante con cuerno dorado');
+INSERT INTO `productos` VALUES (1,'Suave y tierno osito perfecto para acurrucarse','/images/productos/osito-daisy.jpg','Osito Daisy Peluche',15.99,25),(2,'Adorable conejito en tono rosa pastel','/images/productos/conejito-rosa.jpg','Conejito Rosa',18.99,13),(3,'Elefante suave con orejas extra grandes','/images/productos/elefante-francisca.jpg','Elefante Francisca La Tierna',23.99,20),(4,'León con melena esponjosa y sonrisa amigable','/images/productos/leon-valiente.jpg','León Valiente',21.99,15),(5,'Pingüino suave con bufanda invernal','/images/productos/pinguino-polar.jpg','Pingüino Polar',19.99,16),(6,'Unicornio brillante con cuerno dorado','/images/productos/unicornio-magico.jpg','Unicornio Mágico',25.99,2);
 /*!40000 ALTER TABLE `productos` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -79,26 +136,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2025-09-19 11:16:43
-
-CREATE TABLE clientes (
-  id INT AUTO_INCREMENT PRIMARY KEY,
-  nombre VARCHAR(100) NOT NULL,
-  email VARCHAR(150) NOT NULL UNIQUE,
-  password VARCHAR(255) NOT NULL,
-  fecha_registro DATETIME DEFAULT CURRENT_TIMESTAMP
-);
-
-ALTER TABLE carrito
-ADD COLUMN cliente_id INT NOT NULL AFTER id,
-ADD CONSTRAINT fk_cliente
-    FOREIGN KEY (cliente_id) REFERENCES clientes(id)
-    ON DELETE CASCADE
-    ON UPDATE CASCADE;
-
-INSERT INTO clientes (nombre, email, password)
-VALUES ('Pepe Ramos', 'pepon11@gmail.com', 'pepepepito2000');
-
-INSERT INTO carrito (cliente_id, id_productos, cantidad)
-VALUES (1, 2, 3); -- cliente_id = 1, producto_id = 2, cantidad = 3
-
+-- Dump completed on 2025-09-23 12:19:43
