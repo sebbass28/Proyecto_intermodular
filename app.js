@@ -24,6 +24,7 @@ async function cargarProductos() {
                 <div class="producto-info">
                     <h3>${producto.nombre}</h3>
                     <p class="producto-descripcion">${producto.descripcion}</p>
+                    <p class="producto-stock">${producto.stock}</p>
                     <div class="producto-precio">$${producto.precio}</div>
                     <button class="btn-comprar" onclick="agregarAlCarrito(${producto.id}, '${producto.nombre}', ${producto.precio})">
                         Agregar al Carrito
